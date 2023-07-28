@@ -4,11 +4,18 @@ const uniqueValidator = require("mongoose-unique-validator");
 const schema = mongoose.Schema({
   firstName: String,
   lastName: String,
-  profileImage: String,
+  profileImage: {
+    type: String,
+    default: null,
+  },
   phoneNumber: String,
   gender: {
     type: String,
     enum: ["male", "female", "others"],
+  },
+  role: {
+    type: String,
+    enum: ["STUDENT", "TUTOR", "ADMIN"],
   },
   birthday: String,
   passwordHash: String,
