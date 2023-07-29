@@ -5,7 +5,7 @@ const handleEmptyField = (body) => {
   fields.forEach((field) => {
     const value = body[field];
     if (value === "") {
-      result = { error: `'${field}' can't be an empty value` };
+      result = { error: `'${field}' can't have an empty value` };
     }
   });
 
@@ -28,9 +28,14 @@ const handleRequiredFields = (body, requiredFields) => {
   );
 };
 
+const generateCode = () => Math.round(Math.random() * 100000) + 100000;
+
+// const sendCode = () => {}
+
 const handlers = {
   handleEmptyField,
   handleRequiredFields,
+  generateCode,
 };
 
 module.exports = handlers;

@@ -4,6 +4,11 @@ const uniqueValidator = require("mongoose-unique-validator");
 const schema = mongoose.Schema({
   firstName: String,
   lastName: String,
+  verificationCode: String,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
   profileImage: {
     type: String,
     default: null,
