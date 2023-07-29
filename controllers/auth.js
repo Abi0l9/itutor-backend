@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const handlers = require("../utils/handlers");
 const mailer = require("../utils/codeMailer");
 const congratsMailer = require("../utils/congratsMailer");
+const resendCodeMailer = require("../utils/resendCodeMailer");
 
 const resetCode = async (email) => {
   const user = await User.findOne({ email });
@@ -115,7 +116,7 @@ router
     }
   })
 
-  .post("/resendCode/:userId", async (request, response) => {
+  .get("/resendCode/:userId", async (request, response) => {
     const body = request.body;
     const userId = request.params.userId;
 
@@ -125,8 +126,26 @@ router
     }
 
     const user = await User.findById(userId);
+    const { firstName, email } = user;
     if (!user) {
       return response.status(404).json({ error: "Invalid user ID" });
+    }
+
+    const verificationCode = handlers.generateCode();
+    const resendCode = async () => {
+      await resendCodeMailer(firstName, email, verificationCode);
+    };
+
+    user.verificationCode = verificationCode;
+    const payload = { code: verificationCode, email, role: user.role, userId };
+
+    try {
+      await user.save();
+      await resendCode();
+      await resetCode(email);
+      return response.status(201).json(payload).end();
+    } catch (e) {
+      return response.status(400).json({ error: e.message });
     }
   });
 
