@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const handlers = require("../utils/handlers");
 const mailer = require("../utils/codeMailer");
 const congratsMailer = require("../utils/congratsMailer");
@@ -116,20 +117,19 @@ router
     }
   })
 
-  .get("/resendCode/:userId", async (request, response) => {
+  .post("/resendCode", async (request, response) => {
     const body = request.body;
-    const userId = request.params.userId;
 
     const emptyField = handlers.handleEmptyField(body);
     if (emptyField) {
       return response.status(400).json(emptyField);
     }
 
-    const user = await User.findById(userId);
-    const { firstName, email } = user;
+    const user = await User.findOne({ email: body.email });
     if (!user) {
       return response.status(404).json({ error: "Invalid user ID" });
     }
+    const { firstName, email } = user;
 
     const verificationCode = handlers.generateCode();
     const resendCode = async () => {
@@ -137,7 +137,12 @@ router
     };
 
     user.verificationCode = verificationCode;
-    const payload = { code: verificationCode, email, role: user.role, userId };
+    const payload = {
+      code: verificationCode,
+      email,
+      role: user.role,
+      userId: user.id,
+    };
 
     try {
       await user.save();
@@ -147,6 +152,49 @@ router
     } catch (e) {
       return response.status(400).json({ error: e.message });
     }
+  })
+  .post("/signin", async (request, response) => {
+    const body = request.body;
+    const { email, password } = body;
+    const reqFields = ["email", "password"];
+
+    const missingFields = handlers.handleRequiredFields(body, reqFields);
+    if (missingFields) {
+      return response.status(400).json(missingFields).end();
+    }
+
+    const emptyField = handlers.handleEmptyField(body);
+    if (emptyField) {
+      return response.status(400).json(emptyField);
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return response.status(404).json({ error: "Invalid email or password" });
+    }
+
+    const userPassword = user.passwordHash;
+    const passwordIsCorrect = await bcrypt.compare(password, userPassword);
+
+    if (!passwordIsCorrect) {
+      return response.status(401).json({ error: "Invalid email or password" });
+    }
+
+    const payload = {
+      id: user.id,
+      role: user.role,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      isVerified: user.isVerified,
+      phoneNumber: user.phoneNumber,
+    };
+
+    // eslint-disable-next-line no-undef
+    const token = jwt.sign(payload, process.env.SECRET);
+
+    return response.status(200).json({ token }).end();
   });
 
 module.exports = router;

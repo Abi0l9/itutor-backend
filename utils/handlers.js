@@ -1,3 +1,5 @@
+const User = require("../models/User");
+
 const handleEmptyField = (body) => {
   let result;
 
@@ -30,12 +32,18 @@ const handleRequiredFields = (body, requiredFields) => {
 
 const generateCode = () => Math.round(Math.random() * 100000) + 100000;
 
-// const sendCode = () => {}
+const handleInvalidUser = async (userId, request, response) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    return response.status(404).json({ error: "Invalid user ID" });
+  }
+};
 
 const handlers = {
   handleEmptyField,
   handleRequiredFields,
   generateCode,
+  handleInvalidUser,
 };
 
 module.exports = handlers;
