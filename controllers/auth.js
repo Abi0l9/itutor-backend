@@ -3,6 +3,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const handlers = require("../utils/handlers");
 const mailer = require("../utils/codeMailer");
+const congratsMailer = require("../utils/congratsMailer");
 
 const resetCode = async (email) => {
   const user = await User.findOne({ email });
@@ -91,13 +92,41 @@ router
         .json({ error: "Invalid or expired verification code" });
     }
 
+    let role;
+
+    if (user.role === "STUDENT") {
+      role = "student";
+    } else if (user.role === "TUTOR") {
+      role = "tutor";
+    }
+
+    const sendCogratsMsg = async () => {
+      await congratsMailer(user.firstName, user.email, role);
+    };
+
     user.isVerified = true;
 
     try {
       await user.save();
+      await sendCogratsMsg();
       return response.status(200).json({ message: "User verified" }).end();
     } catch (e) {
       return response.status(400).json({ error: e.message });
+    }
+  })
+
+  .post("/resendCode/:userId", async (request, response) => {
+    const body = request.body;
+    const userId = request.params.userId;
+
+    const emptyField = handlers.handleEmptyField(body);
+    if (emptyField) {
+      return response.status(400).json(emptyField);
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return response.status(404).json({ error: "Invalid user ID" });
     }
   });
 
