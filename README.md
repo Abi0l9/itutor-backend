@@ -29,7 +29,7 @@ Base URL: This API can run locally on `http://localhost:4000` or on any given po
 ### POST /api/auth/signup
 
 - General:
-  - Curls the root path of the API
+  - This endpoint receives and processes user's registration details
 - Sample:
   - POST https://itutor-backend-6mcs.onrender.com/api/auth/signup
 - Body:
@@ -55,4 +55,21 @@ Base URL: This API can run locally on `http://localhost:4000` or on any given po
     "role": "TUTOR",
     "userId": "64c61b51c45a721ff1ffa219",
   }
+  ```
+
+### POST /api/auth/{userId}/verify
+
+- General:
+  - On successful registration, the user receives a token, and submits it using this endpoint.
+- Sample:
+  - POST https://itutor-backend-6mcs.onrender.com/api/auth/64c61b51c45a721ff1ffa219/verify
+- Body:
+  ```yaml
+  { "code": "134161" }
+  ```
+- Required: all fields
+
+- Response (201):
+  ```yaml
+  { "message": "User verified" }
   ```
