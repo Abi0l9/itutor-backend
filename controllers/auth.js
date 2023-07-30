@@ -73,7 +73,7 @@ router
     }
   })
 
-  .post("/verify/:userId", async (request, response) => {
+  .post("/:userId/verify", async (request, response) => {
     const body = request.body;
     const userId = request.params.userId;
 

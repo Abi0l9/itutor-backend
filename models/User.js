@@ -9,6 +9,10 @@ const schema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isTutorVerified: {
+    type: Boolean,
+    default: false,
+  },
   profileImage: {
     type: String,
     default: null,
