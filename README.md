@@ -95,3 +95,20 @@ Base URL: This API can run locally on `http://localhost:4000` or on any given po
     "userId": "64c61b51c45a721ff1ffa219",
   }
   ```
+
+### POST /api/auth/signin
+
+- General:
+  - Users can signin into their accounts using this endpoint. It receives the user's email and password.
+- Sample:
+  - POST https://itutor-backend-6mcs.onrender.com/api/auth/signin
+- Body:
+  ```yaml
+  { "email": "user@gmail.com", "password": "secret" }
+  ```
+- Required: all fields
+
+- Response (200):
+  ```yaml
+  { "token": "jwt_token_goes_here_with_users_encoded_details" }
+  ```
