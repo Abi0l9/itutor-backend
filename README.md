@@ -69,7 +69,29 @@ Base URL: This API can run locally on `http://localhost:4000` or on any given po
   ```
 - Required: all fields
 
-- Response (201):
+- Response (200):
   ```yaml
   { "message": "User verified" }
+  ```
+
+### POST /api/auth/resendCode
+
+- General:
+  - Users can use this endpoint to make requests for new token in cases whereby the user didn't insert the token within the specified time or wants a new token.
+- Sample:
+  - POST https://itutor-backend-6mcs.onrender.com/api/auth/resendCode
+- Body:
+  ```yaml
+  { "email": "user@gmail.com" }
+  ```
+- Required: all fields
+
+- Response (200):
+  ```yaml
+  {
+    "code": 116031,
+    "email": "user@gmail.com",
+    "role": "TUTOR",
+    "userId": "64c61b51c45a721ff1ffa219",
+  }
   ```
