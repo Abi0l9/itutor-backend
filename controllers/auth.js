@@ -188,6 +188,7 @@ router
       lastName: user.lastName,
       gender: user.gender,
       isVerified: user.isVerified,
+      isTutorVerified: user.isTutorVerified,
       phoneNumber: user.phoneNumber,
     };
 
