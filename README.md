@@ -40,8 +40,6 @@ Base URL: This API can run locally on `http://localhost:4000` or on any given po
     "email": "user@gmail.com",
     "phoneNumber": "23490123456789",
     "role": "TUTOR",
-    "gender": "male",
-    "birthday": "27/07/2023",
     "password": "secret",
   }
   ```
