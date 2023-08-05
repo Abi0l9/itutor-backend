@@ -36,8 +36,6 @@ router
       "email",
       "phoneNumber",
       "role",
-      "gender",
-      "birthday",
       "password",
     ];
 
